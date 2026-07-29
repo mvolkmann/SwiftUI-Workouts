@@ -2,6 +2,11 @@ import HealthKit
 
 // swiftlint:disable type_body_length
 class HealthStore {
+    private static let zeroFilledQuantityTypes: Set<HKQuantityTypeIdentifier> = [
+        .distanceCycling, .distanceWalkingRunning, .distanceWheelchair,
+        .pushCount, .stepCount
+    ]
+
     private let distanceMap: [String: HKQuantityTypeIdentifier] = [
         "Cycling": .distanceCycling,
         "Hiking": .distanceWalkingRunning,
@@ -22,7 +27,7 @@ class HealthStore {
         calories: Int
     ) async throws {
         guard let activityType = activityMap[workoutType] else {
-            throw "no activity type found for \(workoutType)"
+            throw AppError(message: "no activity type found for \(workoutType)")
         }
 
         let energyBurnedType =
@@ -65,34 +70,18 @@ class HealthStore {
             samples.append(distanceSample)
         }
 
-        // See https://developer.apple.com/forums/thread/725572
-        // I couldn't get this approach to work,
-        // so I'm creating an HKWorkout instead.
-        /*
-         let configuration = HKWorkoutConfiguration()
-         configuration.activityType = activityType
-         let workoutBuilder = HKWorkoutBuilder(
-             healthStore: store,
-             configuration: configuration,
-             device: nil
-         )
-         try await workoutBuilder.beginCollection(at: startTime)
-         try await workoutBuilder.addSamples(samples)
-         try await workoutBuilder.endCollection(at: endTime)
-         try await workoutBuilder.finishWorkout()
-         */
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = activityType
 
-        let workout = HKWorkout(
-            activityType: activityType,
-            start: startTime,
-            end: endTime,
-            duration: 0, // computed from start and end data
-            totalEnergyBurned: energyBurnedQuantity,
-            totalDistance: distanceQuantity,
-            metadata: nil
+        let workoutBuilder = HKWorkoutBuilder(
+            healthStore: store,
+            configuration: configuration,
+            device: nil
         )
-        try await store.save(workout)
-        try await store.addSamples(samples, to: workout)
+        try await workoutBuilder.beginCollection(at: startTime)
+        try await workoutBuilder.addSamples(samples)
+        try await workoutBuilder.endCollection(at: endTime)
+        try await workoutBuilder.finishWorkout()
     }
 
     private func addZeros(
@@ -197,11 +186,10 @@ class HealthStore {
         identifier: HKQuantityTypeIdentifier,
         startDate: Date? = nil,
         endDate: Date? = nil,
-        frequency: Frequency? = nil,
-        quantityFunction: (HKStatistics) -> HKQuantity?
+        frequency: Frequency? = nil
     ) async throws -> [DatedValue] {
         guard let metric = Metrics.shared.map[identifier] else {
-            throw "metric \(identifier.rawValue) not found"
+            throw AppError(message: "metric \(identifier.rawValue) not found")
         }
 
         let frequencyToUse = frequency ?? metric.frequency
@@ -223,7 +211,9 @@ class HealthStore {
 
         var datedValues = collection.map { data -> DatedValue in
             let date = data.startDate
-            let quantity = quantityFunction(data)
+            let quantity = metric.option == .cumulativeSum ?
+                data.sumQuantity() :
+                data.averageQuantity()
             let value = quantity?.doubleValue(for: metric.unit) ?? 0
             return DatedValue(
                 date: frequencyToUse == .day ? date.ymd : date.ymdh,
@@ -234,7 +224,7 @@ class HealthStore {
         }
 
         if !datedValues.isEmpty,
-           HealthKitViewModel.addZeros.contains(identifier) {
+           Self.zeroFilledQuantityTypes.contains(identifier) {
             addZeros(datedValues: &datedValues, frequency: frequency)
         }
 

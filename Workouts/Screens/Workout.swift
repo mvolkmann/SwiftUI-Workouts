@@ -36,7 +36,7 @@ struct Workout: View {
     }
 
     private func addWorkout() {
-        Task {
+        Task { @MainActor in
             do {
                 // HealthKit seems to round down to the nearest tenth.
                 // For example, 20.39 becomes 20.3.
@@ -180,22 +180,22 @@ struct Workout: View {
             distance = defaultDistance
         }
 
-        .onChange(of: defaultCalories) { _ in
+        .onChange(of: defaultCalories) {
             calories = defaultCalories
         }
 
-        .onChange(of: defaultDuration) { _ in
+        .onChange(of: defaultDuration) {
             if let minutes = Int(defaultDuration) {
                 startTime = endTime.minutesBefore(minutes)
             }
         }
 
-        .onChange(of: defaultDistance) { _ in
+        .onChange(of: defaultDistance) {
             distance = defaultDistance
         }
 
-        .onChange(of: scenePhase) { [scenePhase] newPhase in
-            if scenePhase == .background, newPhase == .inactive {
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            if oldPhase == .background, newPhase == .inactive {
                 resetDateAndTimes()
             }
         }

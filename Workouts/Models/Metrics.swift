@@ -1,6 +1,6 @@
 import HealthKit
 
-struct Metric: Hashable, Identifiable {
+struct Metric: Hashable, Identifiable, Sendable {
     let name: String
     let identifier: HKQuantityTypeIdentifier
     let unit: HKUnit
@@ -16,10 +16,10 @@ struct Metric: Hashable, Identifiable {
     }
 }
 
-class Metrics {
+final class Metrics: Sendable {
     static let shared = Metrics()
 
-    var map: [HKQuantityTypeIdentifier: Metric] = [:]
+    let map: [HKQuantityTypeIdentifier: Metric]
 
     var sorted: [Metric] {
         map.values.sorted { $0.name < $1.name }
@@ -28,6 +28,46 @@ class Metrics {
     // This class is a singleton.
     // swiftlint:disable function_body_length
     private init() {
+        var map: [HKQuantityTypeIdentifier: Metric] = [:]
+
+        func addMetricAverage(
+            name: String,
+            identifier: HKQuantityTypeIdentifier,
+            unit: HKUnit,
+            frequency: Frequency = .day,
+            lowerIsBetter: Bool = false,
+            decimalPlaces: Int = 2
+        ) {
+            map[identifier] = Metric(
+                name: name,
+                identifier: identifier,
+                unit: unit,
+                option: .discreteAverage,
+                frequency: frequency,
+                lowerIsBetter: lowerIsBetter,
+                decimalPlaces: decimalPlaces
+            )
+        }
+
+        func addMetricSum(
+            name: String,
+            identifier: HKQuantityTypeIdentifier,
+            unit: HKUnit,
+            frequency: Frequency = .day,
+            lowerIsBetter: Bool = false,
+            decimalPlaces: Int = 2
+        ) {
+            map[identifier] = Metric(
+                name: name,
+                identifier: identifier,
+                unit: unit,
+                option: .cumulativeSum,
+                frequency: frequency,
+                lowerIsBetter: lowerIsBetter,
+                decimalPlaces: decimalPlaces
+            )
+        }
+
         addMetricSum(
             name: "Active Energy Burned",
             identifier: .activeEnergyBurned,
@@ -158,44 +198,8 @@ class Metrics {
             identifier: .walkingStepLength,
             unit: .inch()
         )
-    }
 
-    private func addMetricAverage(
-        name: String,
-        identifier: HKQuantityTypeIdentifier,
-        unit: HKUnit,
-        frequency: Frequency = .day,
-        lowerIsBetter: Bool = false,
-        decimalPlaces: Int = 2
-    ) {
-        map[identifier] = Metric(
-            name: name,
-            identifier: identifier,
-            unit: unit,
-            option: .discreteAverage,
-            frequency: frequency,
-            lowerIsBetter: lowerIsBetter,
-            decimalPlaces: decimalPlaces
-        )
-    }
-
-    private func addMetricSum(
-        name: String,
-        identifier: HKQuantityTypeIdentifier,
-        unit: HKUnit,
-        frequency: Frequency = .day,
-        lowerIsBetter: Bool = false,
-        decimalPlaces: Int = 2
-    ) {
-        map[identifier] = Metric(
-            name: name,
-            identifier: identifier,
-            unit: unit,
-            option: .cumulativeSum,
-            frequency: frequency,
-            lowerIsBetter: lowerIsBetter,
-            decimalPlaces: decimalPlaces
-        )
+        self.map = map
     }
 
     func metric(named: String) -> Metric? {

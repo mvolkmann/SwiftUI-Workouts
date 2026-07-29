@@ -40,7 +40,8 @@ struct Statistics: View {
 
     private func animateChart() {
         for index in data.indices {
-            // Delay rendering each data point a bit longer than the previous one.
+            // Delay rendering each data point a bit longer than the previous
+            // one.
             DispatchQueue.main.asyncAfter(
                 deadline: .now() + Double(index) * 0.015
             ) {
@@ -86,8 +87,10 @@ struct Statistics: View {
 
         if metric.unit == .percent() { return false }
 
-        // If the percent difference between the min and max values is very small,
-        // setting the y-axis to only go from min to max causes the app to crash.
+        // If the percent difference between the min and max values is very
+        // small,
+        // setting the y-axis to only go from min to max causes the app to
+        // crash.
         let min = minValue
         let percentDifference = (maxValue - min) / min
         return percentDifference >= 0.1
@@ -95,7 +98,6 @@ struct Statistics: View {
 
     private var chart: some View {
         Chart {
-            // ForEach(data, id: \.self) { dataPoint in
             ForEach(data.indices, id: \.self) { index in
                 let datedValue = data[index]
 
@@ -148,9 +150,7 @@ struct Statistics: View {
         // Leave room for RuleMark annotations.
         .padding(.horizontal, 20)
         .padding(.top, 55)
-
         .onAppear { animateChart() }
-
         .chartLegend(.hidden)
 
         // Support tapping on the plot area to see data point details.
@@ -159,7 +159,6 @@ struct Statistics: View {
         // Hide the x-axis and its labels.
         // TODO: Can you only hide the labels?
         .chartXAxis(.hidden)
-
         .if(canScaleYAxis(metric: metric)) { view in
             view
                 // Change the y-axis to begin at minValue and end at maxValue.
@@ -205,7 +204,7 @@ struct Statistics: View {
             }
             .pickerStyle(.segmented)
         }
-        .onChange(of: chartType) { _ in
+        .onChange(of: chartType) {
             // Make a copy of data where "animate" is false in each item.
             // This allows the new chart to be animated.
             data = data.map { item in
@@ -295,17 +294,13 @@ struct Statistics: View {
             timeSpan: timeSpan
         )
 
-        Task {
+        Task { @MainActor in
             do {
                 let newData = try await HealthStore().getData(
                     identifier: metric.identifier,
                     startDate: startDate,
                     frequency: frequency
-                ) { data in
-                    metric.option == .cumulativeSum ?
-                        data.sumQuantity() :
-                        data.averageQuantity()
-                }
+                )
                 // All objects in data will now have "animate" set to false.
 
                 dateToValueMap = [:]
@@ -346,10 +341,12 @@ struct Statistics: View {
             sortDescriptors: nil
         ) { _, samples, error in
             if let error {
-                errorVM.alert(
-                    error: error,
-                    message: "Error loading health data."
-                )
+                Task { @MainActor in
+                    errorVM.alert(
+                        error: error,
+                        message: "Error loading health data."
+                    )
+                }
                 return
             }
 
@@ -367,7 +364,9 @@ struct Statistics: View {
                 }
             }
 
-            runningMiles = miles
+            Task { @MainActor in
+                runningMiles = miles
+            }
         }
 
         store.execute(query)
@@ -390,12 +389,15 @@ struct Statistics: View {
             Text("Metric").fontWeight(.bold)
             Picker("", selection: $metric) {
                 ForEach(Metrics.shared.sorted) {
-                    Text($0.name).tag($0)
+                    Text($0.name)
+                        .lineLimit(1)
+                        .tag($0)
                 }
             }
-            Spacer()
+            .fixedSize(horizontal: true, vertical: false)
         }
-        .onChange(of: metric) { _ in loadData() }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .onChange(of: metric) { loadData() }
     }
 
     private var minValue: Double {
@@ -479,7 +481,7 @@ struct Statistics: View {
             }
             .pickerStyle(.segmented)
         }
-        .onChange(of: timeSpan) { _ in loadData() }
+        .onChange(of: timeSpan) { loadData() }
     }
 
     private var title: String {

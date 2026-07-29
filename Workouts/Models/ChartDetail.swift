@@ -1,37 +1,41 @@
 import HealthKit
 
-struct ChartKey: Hashable {
+struct ChartKey: Hashable, Sendable {
     let metric: HKQuantityTypeIdentifier
     let timeSpan: TimeSpan
 }
 
-struct ChartValue {
+struct ChartValue: Sendable {
     let frequency: Frequency // of data collection
     let type: ChartType // bar or line
 }
 
-class ChartDetail {
+final class ChartDetail: Sendable {
     static let shared = ChartDetail()
 
-    private var map: [ChartKey: ChartValue] = [:]
+    private let map: [ChartKey: ChartValue]
 
     private init() {
+        var map: [ChartKey: ChartValue] = [:]
+
+        func addDetail(
+            _ metric: HKQuantityTypeIdentifier,
+            _ timeSpan: TimeSpan,
+            _ frequency: Frequency,
+            _ type: ChartType
+        ) {
+            let key = ChartKey(metric: metric, timeSpan: timeSpan)
+            let value = ChartValue(frequency: frequency, type: type)
+            map[key] = value
+        }
+
         addDetail(.activeEnergyBurned, .day, .hour, .line)
         addDetail(.activeEnergyBurned, .week, .day, .bar)
         addDetail(.activeEnergyBurned, .month, .day, .bar)
         addDetail(.activeEnergyBurned, .quarter, .week, .line)
         // TODO: Add more metric-specific details here?
-    }
 
-    private func addDetail(
-        _ metric: HKQuantityTypeIdentifier,
-        _ timeSpan: TimeSpan,
-        _ frequency: Frequency,
-        _ type: ChartType
-    ) {
-        let key = ChartKey(metric: metric, timeSpan: timeSpan)
-        let value = ChartValue(frequency: frequency, type: type)
-        map[key] = value
+        self.map = map
     }
 
     func frequency(

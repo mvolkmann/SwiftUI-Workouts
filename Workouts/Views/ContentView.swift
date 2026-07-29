@@ -5,7 +5,7 @@ struct ContentView: View {
 
     @FocusState private var isFocused: Bool
 
-    @State private var appInfo: AppInfo?
+    @State private var appInfo: AppInfo? = AppInfo()
     @State private var isInfoPresented = false
     @State private var isSettingsPresented = false
     @State private var selection = "Workout"
@@ -96,6 +96,7 @@ struct ContentView: View {
             do {
                 appInfo = try await AppInfo.create()
             } catch {
+                appInfo = AppInfo()
                 Log.error("Failed to get AppInfo.")
                 /*
                  errorVM.alert(

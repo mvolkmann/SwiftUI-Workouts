@@ -1,20 +1,30 @@
 import Foundation
 
 struct AppInfo {
-    static let infoDict = Bundle.main.infoDictionary!
+    private static func bundleInfo(_ keys: String...) -> String {
+        for key in keys {
+            if let value = Bundle.main.infoDictionary?[key] as? String,
+               !value.isEmpty {
+                return value
+            }
+        }
+        return ""
+    }
 
     var json: [String: Any] = [:]
 
-    private init(json: [String: Any]) {
+    init(json: [String: Any] = [:]) {
         self.json = json
     }
 
     static func create() async throws -> Self {
         let urlPrefix = "https://itunes.apple.com/lookup?bundleId="
-        let identifier = infoDict["CFBundleIdentifier"] as? String ?? ""
+        let identifier = bundleInfo("CFBundleIdentifier")
         let url = URL(string: "\(urlPrefix)\(identifier)&country=US")
         guard let url else {
-            throw "AppStoreService: bad URL \(String(describing: url))"
+            throw AppError(
+                message: "AppInfo: bad URL \(String(describing: url))"
+            )
         }
 
         // Using the ephemeral configuration avoids caching.
@@ -24,12 +34,12 @@ struct AppInfo {
             with: data,
             options: [.allowFragments]
         ) as? [String: Any] else {
-            throw "AppStoreService: bad JSON"
+            throw AppError(message: "AppInfo: bad JSON")
         }
 
         guard let results =
             (json["results"] as? [Any])?.first as? [String: Any] else {
-            throw "AppStoreService: JSON missing results"
+            throw AppError(message: "AppInfo: JSON missing results")
         }
 
         // After a new version is released, there seems to be a
@@ -50,21 +60,21 @@ struct AppInfo {
     }
 
     private func info(_ key: String) -> String {
-        Self.infoDict[key] as? String ?? ""
+        Self.bundleInfo(key)
     }
 
     private func int(_ key: String) -> Int {
         json[key] as? Int ?? 0
     }
 
-    private func string(_ key: String) -> String {
-        json[key] as? String ?? ""
+    private func string(_ key: String, fallback: String = "") -> String {
+        json[key] as? String ?? fallback
     }
 
     var appId: Int { int("trackId") }
     var appURL: String { string("trackViewUrl") }
     var author: String { string("sellerName") }
-    var bundleId: String { string("bundleId") }
+    var bundleId: String { string("bundleId", fallback: identifier) }
     var description: String { string("description") }
     var iconURL: String { string("artworkUrl100") }
     var supportURL: String { string("sellerUrl") }
@@ -77,10 +87,15 @@ struct AppInfo {
     var installedVersion: String { info("CFBundleShortVersionString") }
     var identifier: String { info("CFBundleIdentifier") }
     var minimumOsVersion: String { string("minimumOsVersion") }
-    var name: String { string("trackName") }
+    var name: String {
+        string(
+            "trackName",
+            fallback: Self.bundleInfo("CFBundleDisplayName", "CFBundleName")
+        )
+    }
     // "Promotional Text" is not present in the App Store JSON.
     var price: Double { double("price") }
     var releaseDate: Date { date("currentVersionReleaseDate") }
     var releaseNotes: String { string("releaseNotes") }
-    var storeVersion: String { string("version") }
+    var storeVersion: String { string("version", fallback: installedVersion) }
 }

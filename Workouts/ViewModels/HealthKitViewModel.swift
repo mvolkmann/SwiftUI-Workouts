@@ -8,13 +8,6 @@ final class HealthKitViewModel: ObservableObject {
 
     private init() {}
 
-    // MARK: - Constants
-
-    static let addZeros: Set<HKQuantityTypeIdentifier> = [
-        .distanceCycling, .distanceWalkingRunning, .distanceWheelchair,
-        .pushCount, .stepCount
-    ]
-
     // MARK: - Properties
 
     @Published private(set) var activeEnergyBurned: [DatedValue] = []

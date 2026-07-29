@@ -2,7 +2,8 @@ import SwiftUI
 
 // This is inspired by the Azam Sharp YouTube video "Presenting Errors
 // Globally in SwiftUI Applications" at https://youtu.be/QfDd9GxjFvk .
-class ErrorViewModel: ObservableObject {
+@MainActor
+final class ErrorViewModel: ObservableObject {
     @Published var errorOccurred = false
     @Published private var error: Error?
     @Published private var message = ""

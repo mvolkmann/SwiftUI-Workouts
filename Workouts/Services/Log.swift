@@ -1,25 +1,8 @@
 import Foundation // for Bundle
 import os
 
-// This is necessary to allow OSLogType values to be Dictionary keys.
-extension OSLogType: Hashable {}
-
 enum Log {
     // MARK: - Constants
-
-    private static let typeToEmoji: [OSLogType: String] = [
-        .debug: "🪲",
-        .error: "❌",
-        .fault: "☠️",
-        .info: "🔎"
-    ]
-
-    private static let typeToName: [OSLogType: String] = [
-        .debug: "debug",
-        .error: "error",
-        .fault: "fault",
-        .info: "info"
-    ]
 
     private static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -36,12 +19,42 @@ enum Log {
         _ line: Int
     ) -> String {
         let fileName = file.components(separatedBy: "/").last ?? "unknown"
-        let emoji = typeToEmoji[type] ?? ""
-        let name = typeToName[type] ?? ""
+        let emoji = emoji(for: type)
+        let name = name(for: type)
         return """
         \(fileName) \(function) line \(line)
         \(emoji) \(name): \(message)
         """
+    }
+
+    private static func emoji(for type: OSLogType) -> String {
+        switch type {
+        case .debug:
+            "🪲"
+        case .error:
+            "❌"
+        case .fault:
+            "☠️"
+        case .info:
+            "🔎"
+        default:
+            ""
+        }
+    }
+
+    private static func name(for type: OSLogType) -> String {
+        switch type {
+        case .debug:
+            "debug"
+        case .error:
+            "error"
+        case .fault:
+            "fault"
+        case .info:
+            "info"
+        default:
+            ""
+        }
     }
 
     static func debug(
