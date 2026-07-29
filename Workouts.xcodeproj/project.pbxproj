@@ -33,6 +33,7 @@
 		1AAD5E04295B503D00D40C2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AAD5E03295B503D00D40C2A /* Assets.xcassets */; };
 		1AAD5E07295B503D00D40C2A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AAD5E06295B503D00D40C2A /* Preview Assets.xcassets */; };
 		1AAD5E13295B54F300D40C2A /* NumbersOnlyViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAD5E12295B54F300D40C2A /* NumbersOnlyViewModifier.swift */; };
+		1AAFE801301A96A100DD6CB5 /* WorkoutType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAFE800301A96A100DD6CB5 /* WorkoutType.swift */; };
 		1AB5824C301A3E80004C0CB0 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB5824B301A3E80004C0CB0 /* AppError.swift */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		1AAD5E12295B54F300D40C2A /* NumbersOnlyViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumbersOnlyViewModifier.swift; sourceTree = "<group>"; };
 		1AAD5E14295B581400D40C2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1AAFE7FF301A922D00DD6CB5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = Workouts/README.md; sourceTree = "<group>"; };
+		1AAFE800301A96A100DD6CB5 /* WorkoutType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutType.swift; sourceTree = "<group>"; };
 		1AB5824B301A3E80004C0CB0 /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,6 +111,7 @@
 				1A1E8ADC29BE62E700BAA531 /* Metrics.swift */,
 				1A95EFD229C21EB500282232 /* TimeSpan.swift */,
 				1AB5824B301A3E80004C0CB0 /* AppError.swift */,
+				1AAFE800301A96A100DD6CB5 /* WorkoutType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				1A90BCB829AA8CCD0093D160 /* WorkoutTypePicker.swift in Sources */,
 				1A95EFCF29C21C9A00282232 /* ChartDetail.swift in Sources */,
 				1A90BCBA29AA92610093D160 /* Settings.swift in Sources */,
+				1AAFE801301A96A100DD6CB5 /* WorkoutType.swift in Sources */,
 				1AB5824C301A3E80004C0CB0 /* AppError.swift in Sources */,
 				1A1E8AE129BE6A6C00BAA531 /* HealthKitViewModel.swift in Sources */,
 				1A90BCB129AA84340093D160 /* Statistics.swift in Sources */,

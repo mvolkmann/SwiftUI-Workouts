@@ -126,7 +126,7 @@ struct Workout: View {
                     }
                 }
 
-                if distanceWorkouts.contains(workoutType) {
+                if WorkoutType.named(workoutType)?.tracksDistance == true {
                     HStack {
                         Text("\(preferKilometers ? "Kilometers" : "Miles")")
                         Spacer()

@@ -32,7 +32,8 @@ struct Settings: View {
             VStack(spacing: 20) {
                 WorkoutTypePicker(workoutType: $defaultWorkoutType)
 
-                if distanceWorkouts.contains(defaultWorkoutType) {
+                if WorkoutType.named(defaultWorkoutType)?
+                    .tracksDistance == true {
                     Picker("", selection: $preferKilometers) {
                         Text("Miles").tag(false)
                         Text("Kilometers").tag(true)
@@ -42,7 +43,8 @@ struct Settings: View {
 
                 DurationPicker(duration: $defaultDuration)
 
-                if distanceWorkouts.contains(defaultWorkoutType) {
+                if WorkoutType.named(defaultWorkoutType)?
+                    .tracksDistance == true {
                     LabeledContent("Distance") {
                         TextField("distance", text: $defaultDistance)
                             .focused(isFocused)
@@ -55,7 +57,7 @@ struct Settings: View {
                 LabeledContent("Calories") {
                     TextField("calories", text: $defaultCalories)
                         .focused(isFocused)
-                        .numbersOnly($defaultDistance, float: true)
+                        .numbersOnly($defaultCalories)
                         .textFieldStyle(.roundedBorder)
                         .frame(maxWidth: textFieldWidth)
                 }

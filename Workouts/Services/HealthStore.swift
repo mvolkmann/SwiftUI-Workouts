@@ -7,14 +7,6 @@ class HealthStore {
         .pushCount, .stepCount
     ]
 
-    private let distanceMap: [String: HKQuantityTypeIdentifier] = [
-        "Cycling": .distanceCycling,
-        "Hiking": .distanceWalkingRunning,
-        "Running": .distanceWalkingRunning,
-        "Swimming": .distanceSwimming,
-        "Walking": .distanceWalkingRunning
-    ]
-
     // This assumes that HKHealthStore.isHealthDataAvailable()
     // has already been checked.
     private var store = HKHealthStore()
@@ -26,8 +18,8 @@ class HealthStore {
         distance: Double,
         calories: Int
     ) async throws {
-        guard let activityType = activityMap[workoutType] else {
-            throw AppError(message: "no activity type found for \(workoutType)")
+        guard let workoutType = WorkoutType.named(workoutType) else {
+            throw AppError(message: "no workout type found for \(workoutType)")
         }
 
         let energyBurnedType =
@@ -46,16 +38,13 @@ class HealthStore {
 
         var distanceQuantity: HKQuantity?
 
-        if distanceWorkouts.contains(workoutType),
-           let identifier = distanceMap[workoutType] {
+        if let identifier = workoutType.distanceIdentifier {
             let distanceType =
                 HKObjectType.quantityType(forIdentifier: identifier)!
             let preferKM =
                 UserDefaults.standard.bool(forKey: "preferKilometers")
             let unit: HKUnit = preferKM ? HKUnit.meter() : HKUnit.mile()
-            let unitDistance = !distanceWorkouts.contains(workoutType) ?
-                0 :
-                (preferKM ? distance * 1000 : distance)
+            let unitDistance = preferKM ? distance * 1000 : distance
             distanceQuantity = HKQuantity(
                 unit: unit,
                 doubleValue: unitDistance
@@ -71,7 +60,7 @@ class HealthStore {
         }
 
         let configuration = HKWorkoutConfiguration()
-        configuration.activityType = activityType
+        configuration.activityType = workoutType.activityType
 
         let workoutBuilder = HKWorkoutBuilder(
             healthStore: store,
@@ -274,6 +263,48 @@ class HealthStore {
                     continuation.resume(returning: [HKStatistics]())
                 }
             }
+            store.execute(query)
+        }
+    }
+
+    func runningMiles(startDate: Date, endDate: Date) async throws -> Double {
+        let workoutDate = HKQuery.predicateForWorkoutActivities(
+            start: startDate,
+            end: endDate
+        )
+        let workouts = HKQuery.predicateForWorkouts(
+            activityPredicate: workoutDate
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: .workoutType(),
+                predicate: workouts,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let workouts = samples as? [HKWorkout] else {
+                    continuation.resume(returning: 0)
+                    return
+                }
+
+                let quantityType = HKQuantityType(.distanceWalkingRunning)
+                let miles = workouts.reduce(0.0) { total, workout in
+                    guard workout.workoutActivityType == .running,
+                          let distance = workout.statistics(for: quantityType)?
+                          .sumQuantity() else {
+                        return total
+                    }
+                    return total + distance.doubleValue(for: .mile())
+                }
+                continuation.resume(returning: miles)
+            }
+
             store.execute(query)
         }
     }

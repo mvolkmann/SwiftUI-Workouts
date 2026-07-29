@@ -1,53 +1,16 @@
-import HealthKit
 import SwiftUI
 
-let activityMap: [String: HKWorkoutActivityType] = [
-    "Boxing": .boxing,
-    "Climbing": .climbing,
-    "Cycling": .cycling,
-    "Elliptical": .elliptical,
-    "Hiking": .hiking,
-    "Kickboxing": .kickboxing,
-    "Pilates": .pilates,
-    "Rowing": .rowing,
-    "Running": .running,
-    "Skating Sports": .skatingSports,
-    "Stairs": .stairs,
-    "Swimming": .swimming,
-    "Yoga": .yoga,
-    "Walking": .walking
-]
-
-let distanceWorkouts = [
-    "Cycling", "Hiking", "Running", "Swimming", "Walking"
-]
-
-let symbolMap: [String: String] = [
-    "Boxing": "figure.boxing",
-    "Climbing": "figure.climbing",
-    "Cycling": "figure.outdoor.cycle",
-    "Elliptical": "figure.elliptical",
-    "Hiking": "figure.hiking",
-    "Kickboxing": "figure.kickboxing",
-    "Pilates": "figure.pilates",
-    "Rowing": "figure.rower",
-    "Running": "figure.run",
-    "Skating Sports": "figure.skating",
-    "Stairs": "figure.stairs",
-    "Swimming": "figure.pool.swim",
-    "Yoga": "figure.yoga",
-    "Walking": "figure.walk"
-]
-
 struct WorkoutTypePicker: View {
-    let types: [String] = Array(activityMap.keys).sorted()
-
     var workoutType: Binding<String>
+
+    private var selectedWorkoutType: WorkoutType? {
+        WorkoutType.named(workoutType.wrappedValue)
+    }
 
     var body: some View {
         VStack {
-            if let systemName = symbolMap[workoutType.wrappedValue] {
-                Image(systemName: systemName)
+            if let selectedWorkoutType {
+                Image(systemName: selectedWorkoutType.symbolName)
                     .resizable()
                     .scaledToFit()
                     .frame(height: 120)
@@ -59,8 +22,8 @@ struct WorkoutTypePicker: View {
                 // Wrapping the Picker in a Menu allows us to control the font used.
                 Menu {
                     Picker("", selection: workoutType) {
-                        ForEach(types, id: \.self) { type in
-                            Text(type)
+                        ForEach(WorkoutType.all) { type in
+                            Text(type.name).tag(type.name)
                         }
                     }
                 } label: {

@@ -322,54 +322,20 @@ struct Statistics: View {
     private func loadRunningMiles() {
         runningMiles = 0.0
 
-        let store = HKHealthStore()
-
-        let endDate = Date.now
-        let workoutDate = HKQuery.predicateForWorkoutActivities(
-            start: endDate.startOfYear,
-            end: endDate
-        )
-
-        let workouts = HKQuery.predicateForWorkouts(
-            activityPredicate: workoutDate
-        )
-
-        let query = HKSampleQuery(
-            sampleType: .workoutType(),
-            predicate: workouts,
-            limit: HKObjectQueryNoLimit,
-            sortDescriptors: nil
-        ) { _, samples, error in
-            if let error {
-                Task { @MainActor in
-                    errorVM.alert(
-                        error: error,
-                        message: "Error loading health data."
-                    )
-                }
-                return
-            }
-
-            guard let workouts = samples as? [HKWorkout] else { return }
-
-            var miles = 0.0
-            for workout in workouts {
-                if workout.workoutActivityType == .running {
-                    let quantityType = HKQuantityType(.distanceWalkingRunning)
-                    let distance = workout.statistics(for: quantityType)?
-                        .sumQuantity()
-                    if let distance {
-                        miles += distance.doubleValue(for: .mile())
-                    }
-                }
-            }
-
-            Task { @MainActor in
-                runningMiles = miles
+        Task { @MainActor in
+            do {
+                let endDate = Date.now
+                runningMiles = try await HealthStore().runningMiles(
+                    startDate: endDate.startOfYear,
+                    endDate: endDate
+                )
+            } catch {
+                errorVM.alert(
+                    error: error,
+                    message: "Error loading health data."
+                )
             }
         }
-
-        store.execute(query)
     }
 
     private var maxValue: Double {
