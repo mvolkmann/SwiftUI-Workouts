@@ -267,10 +267,10 @@ class HealthStore {
         }
     }
 
-    func runningMiles(startDate: Date, endDate: Date) async throws -> Double {
+    func runningMiles(start: Date, end: Date) async throws -> Double {
         let workoutDate = HKQuery.predicateForWorkoutActivities(
-            start: startDate,
-            end: endDate
+            start: start,
+            end: end
         )
         let workouts = HKQuery.predicateForWorkouts(
             activityPredicate: workoutDate

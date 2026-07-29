@@ -342,8 +342,8 @@ struct Statistics: View {
             do {
                 let endDate = Date.now
                 runningMiles = try await HealthStore().runningMiles(
-                    startDate: endDate.startOfYear,
-                    endDate: endDate
+                    start: endDate.startOfYear,
+                    end: endDate
                 )
             } catch {
                 errorVM.alert(
