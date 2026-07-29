@@ -242,14 +242,11 @@ struct Statistics: View {
         return parts.first ?? selectedDate
     }
 
-    private var distanceWalkingRunning: Int {
-        let miles = vm.distanceWalkingRunning.reduce(0) { $0 + $1.value }
-        // TODO: All distances need conversion!
-        guard preferKilometers else { return round(miles) }
-        return round(
-            Measurement(value: miles, unit: UnitLength.miles)
-                .converted(to: UnitLength.kilometers).value
-        )
+    private func displayDistance(fromMiles miles: Double) -> Double {
+        guard preferKilometers else { return miles }
+
+        return Measurement(value: miles, unit: UnitLength.miles)
+            .converted(to: UnitLength.kilometers).value
     }
 
     private var formattedValue: String {
@@ -387,8 +384,6 @@ struct Statistics: View {
         return item?.value ?? 0.0
     }
 
-    private func round(_ n: Double) -> Int { Int(n.rounded()) }
-
     private var startDate: Date {
         let today = Date().withoutTime
         return timeSpan == .day ? today.yesterday :
@@ -431,22 +426,25 @@ struct Statistics: View {
             if vm.distanceSwimmingSum > 0 {
                 labelledValue(
                     "Swimming \(unitName)",
-                    vm.distanceSwimmingSum
+                    displayDistance(fromMiles: vm.distanceSwimmingSum)
                 )
             }
             if vm.distanceCyclingSum > 0 {
                 labelledValue(
                     "Cycling \(unitName)",
-                    vm.distanceCyclingSum
+                    displayDistance(fromMiles: vm.distanceCyclingSum)
                 )
             }
             if runningMiles > 0 {
-                labelledValue("Running \(unitName)", runningMiles)
+                labelledValue(
+                    "Running \(unitName)",
+                    displayDistance(fromMiles: runningMiles)
+                )
             }
             if vm.distanceWalkingRunningSum > 0 {
                 labelledValue(
                     "Walk+Run \(unitName)",
-                    vm.distanceWalkingRunningSum
+                    displayDistance(fromMiles: vm.distanceWalkingRunningSum)
                 )
             }
         }
