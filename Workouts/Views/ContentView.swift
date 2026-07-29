@@ -1,6 +1,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    private enum Tab {
+        case workout
+        case statistics
+        case settings
+
+        var title: String {
+            switch self {
+            case .workout:
+                "Workout"
+            case .statistics:
+                "Statistics"
+            case .settings:
+                "Default Settings"
+            }
+        }
+    }
+
     @EnvironmentObject private var errorVM: ErrorViewModel
 
     @FocusState private var isFocused: Bool
@@ -8,8 +25,7 @@ struct ContentView: View {
     @State private var appInfo: AppInfo? = AppInfo()
     @State private var isInfoPresented = false
     @State private var isSettingsPresented = false
-    @State private var selection = "Workout"
-    // @State private var selection = "Statistics"
+    @State private var selection: Tab = .workout
 
     init() {
         customizeNavBar()
@@ -34,7 +50,7 @@ struct ContentView: View {
                     .tabItem {
                         Label("Workout", systemImage: "figure.indoor.cycle")
                     }
-                    .tag("Workout")
+                    .tag(Tab.workout)
                 Statistics()
                     .tabItem {
                         Label(
@@ -42,7 +58,7 @@ struct ContentView: View {
                             systemImage: "chart.xyaxis.line"
                         )
                     }
-                    .tag("Statistics")
+                    .tag(Tab.statistics)
                 Settings(isFocused: $isFocused)
                     .tabItem {
                         Label(
@@ -50,10 +66,10 @@ struct ContentView: View {
                             systemImage: "gear"
                         )
                     }
-                    .tag("Default Settings")
+                    .tag(Tab.settings)
             }
 
-            .navigationTitle(selection)
+            .navigationTitle(selection.title)
             .navigationBarTitleDisplayMode(.inline)
 
             .toolbar {

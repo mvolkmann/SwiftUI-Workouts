@@ -67,8 +67,8 @@
 		1AAD5E0D295B51E900D40C2A /* Workouts.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Workouts.entitlements; sourceTree = "<group>"; };
 		1AAD5E12295B54F300D40C2A /* NumbersOnlyViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumbersOnlyViewModifier.swift; sourceTree = "<group>"; };
 		1AAD5E14295B581400D40C2A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		1AAFE7FF301A922D00DD6CB5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = Workouts/README.md; sourceTree = "<group>"; };
 		1AAFE800301A96A100DD6CB5 /* WorkoutType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutType.swift; sourceTree = "<group>"; };
+		1AAFE802301A9B9D00DD6CB5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1AB5824B301A3E80004C0CB0 /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -150,7 +150,7 @@
 		1AAD5DF3295B503C00D40C2A = {
 			isa = PBXGroup;
 			children = (
-				1AAFE7FF301A922D00DD6CB5 /* README.md */,
+				1AAFE802301A9B9D00DD6CB5 /* README.md */,
 				1AAD5DFE295B503C00D40C2A /* Workouts */,
 				1AAD5DFD295B503C00D40C2A /* Products */,
 			);

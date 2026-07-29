@@ -3,6 +3,23 @@ import HealthKit
 import SwiftUI
 
 struct Statistics: View {
+    private enum StatsKind {
+        case year
+        case week
+        case charts
+
+        var title: String {
+            switch self {
+            case .year:
+                String(Date.now.year)
+            case .week:
+                "Past 7 Days"
+            case .charts:
+                "Charts"
+            }
+        }
+    }
+
     @AppStorage("preferKilometers") private var preferKilometers = false
 
     @Environment(\.colorScheme) private var colorScheme
@@ -16,8 +33,7 @@ struct Statistics: View {
     @State private var runningMiles = 0.0
     @State private var selectedDate = ""
     @State private var selectedValue = 0.0
-    @State private var statsKind = "year"
-    // @State private var statsKind = "chart"
+    @State private var statsKind: StatsKind = .year
     @State private var timeSpan: TimeSpan = .week
 
     @StateObject private var vm = HealthKitViewModel.shared
@@ -482,21 +498,19 @@ struct Statistics: View {
             Rectangle().fill(fill).ignoresSafeArea()
             VStack {
                 Picker("", selection: $statsKind) {
-                    Text(String(Date.now.year)).tag("year")
-                    Text("Past 7 Days").tag("week")
-                    Text("Charts").tag("charts")
+                    Text(StatsKind.year.title).tag(StatsKind.year)
+                    Text(StatsKind.week.title).tag(StatsKind.week)
+                    Text(StatsKind.charts.title).tag(StatsKind.charts)
                 }
                 .pickerStyle(.segmented)
 
                 switch statsKind {
-                case "year":
+                case .year:
                     statsForYear
-                case "week":
+                case .week:
                     statsForWeek
-                case "charts":
+                case .charts:
                     healthChart
-                default:
-                    EmptyView()
                 }
 
                 Spacer()
