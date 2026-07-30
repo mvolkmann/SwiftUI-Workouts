@@ -29,7 +29,14 @@ struct AppInfo {
 
         // Using the ephemeral configuration avoids caching.
         let session = URLSession(configuration: .ephemeral)
-        let (data, _) = try await session.data(from: url)
+        let (data, response) = try await session.data(from: url)
+        if let response = response as? HTTPURLResponse,
+           !(200 ... 299).contains(response.statusCode) {
+            throw AppError(
+                message: "AppInfo: HTTP status \(response.statusCode)"
+            )
+        }
+
         guard let json = try JSONSerialization.jsonObject(
             with: data,
             options: [.allowFragments]
@@ -39,7 +46,7 @@ struct AppInfo {
 
         guard let results =
             (json["results"] as? [Any])?.first as? [String: Any] else {
-            throw AppError(message: "AppInfo: JSON missing results")
+            return Self()
         }
 
         // After a new version is released, there seems to be a
@@ -52,11 +59,26 @@ struct AppInfo {
     }
 
     private func date(_ key: String) -> Date {
-        json[key] as? Date ?? Date.now
+        guard let value = json[key] as? String else { return Date.now }
+        return date(from: value) ?? Date.now
     }
 
     private func double(_ key: String) -> Double {
-        json[key] as? Double ?? 1.2 // 0
+        json[key] as? Double ?? 0
+    }
+
+    private func date(from value: String) -> Date? {
+        let fractionalSecondsFormatter = ISO8601DateFormatter()
+        fractionalSecondsFormatter.formatOptions = [
+            .withInternetDateTime,
+            .withFractionalSeconds
+        ]
+
+        if let date = fractionalSecondsFormatter.date(from: value) {
+            return date
+        }
+
+        return ISO8601DateFormatter().date(from: value)
     }
 
     private func info(_ key: String) -> String {
