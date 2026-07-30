@@ -77,11 +77,11 @@ distance (in the selected units), and calories burned.
 The "Statistics" screen displays many health statistics.
 It is composed of three tabs, the current year, the past 7 days, and charts.
 
-<img src="screenshots/statistics-year.png" alt="Current year statistics" height="500">
-
 The current year tab displays the total cycling, running, swimming,
 and "walk+run" distance for the current year so far.
 Sadly, the health database does not separate walking and running data.
+
+<img src="screenshots/statistics-year.png" alt="Current year statistics" height="500">
 
 The "Past 7 Days" tab displays the following data:
 
