@@ -349,6 +349,7 @@ class HealthStore {
                     quantityType(.appleExerciseTime),
                     quantityType(.appleStandTime),
                     quantityType(.basalEnergyBurned),
+                    quantityType(.bodyMass),
 
                     quantityType(.distanceCycling),
                     // quantityType(.distanceDownhillSnowSports),

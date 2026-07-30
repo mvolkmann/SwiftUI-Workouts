@@ -92,6 +92,12 @@ final class Metrics: Sendable {
             unit: .largeCalorie(),
             frequency: .hour
         )
+        addMetricAverage(
+            name: "Weight",
+            identifier: .bodyMass,
+            unit: .pound(),
+            decimalPlaces: 1
+        )
         addMetricSum(
             name: "Distance Cycling",
             identifier: .distanceCycling,

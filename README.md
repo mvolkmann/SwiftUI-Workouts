@@ -124,6 +124,7 @@ The following health metrics are supported:
 - Walking Double Support %
 - Walking Speed
 - Walking Step Length
+- Weight
 
 <img src="screenshots/statistics-charts-bar.png" alt="Bar chart statistics" height="500">
 
