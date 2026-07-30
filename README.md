@@ -43,8 +43,6 @@ and writing workout, active energy burned, and distance data.
 
 The app is composed of three main screens.
 
-![Workout screen](screenshots/workout.png)
-
 The "Workout" screen allows users to:
 
 - select a workout type (such as Cycling, Running, Swimming, Walking, and more)
@@ -54,6 +52,8 @@ The "Workout" screen allows users to:
   if appropriate for the workout type
 - enter the number of calories burned
 - add the described workout by tapping the "Add Workout" button
+
+<img src="screenshots/workout.png" alt="Workout screen" height="500">
 
 To verify that a workout was successfully added:
 
@@ -72,12 +72,12 @@ This screen enables selecting default values for
 the workout type, units (miles or kilometers), duration (minutes),
 distance (in the selected units), and calories burned.
 
-![Settings screen](screenshots/settings.png)
+<img src="screenshots/settings.png" alt="Settings screen" height="500">
 
 The "Statistics" screen displays many health statistics.
 It is composed of three tabs, the current year, the past 7 days, and charts.
 
-![Current year statistics](screenshots/statistics-year.png)
+<img src="screenshots/statistics-year.png" alt="Current year statistics" height="500">
 
 The current year tab displays the total cycling, running, swimming,
 and "walk+run" distance for the current year so far.
@@ -92,7 +92,7 @@ The "Past 7 Days" tab displays the following data:
 - Basal Calories burned per day
 - Total Calories burned per day
 
-![Past 7 days statistics](screenshots/statistics-past-7-days.png)
+<img src="screenshots/statistics-past-7-days.png" alt="Past 7 days statistics" height="500">
 
 The "Charts" tab displays a chart (using Swift Charts) that contains
 data for a selected health metric over a selected time span.
@@ -122,9 +122,9 @@ The following health metrics are supported:
 - Walking Speed
 - Walking Step Length
 
-![Bar chart statistics](screenshots/statistics-charts-bar.png)
+<img src="screenshots/statistics-charts-bar.png" alt="Bar chart statistics" height="500">
 
-![Line chart statistics](screenshots/statistics-charts-line.png)
+<img src="screenshots/statistics-charts-line.png" alt="Line chart statistics" height="500">
 
 ## Groups
 
@@ -151,4 +151,3 @@ from Swift 5 to Swift 6.
 The main reason I chose to use this app for my final project
 is that I want to deploy it to the App Store and
 the course syllabus calls for discussing deploying apps in week 8.
-
