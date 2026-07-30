@@ -55,6 +55,9 @@ The "Workout" screen allows users to:
 
 <img src="screenshots/workout.png" alt="Workout screen" height="500">
 
+When a workout type is selected, the image above it
+changes to an appropriate SF Symbol.
+
 To verify that a workout was successfully added:
 
 - open the Health app
