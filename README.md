@@ -67,6 +67,7 @@ The "Charts" tab displays a chart (using Swift Charts) that contains
 data for a selected health metric over a selected time span.
 The time span can be 24 hours, 1 week, 1 month, or 3 months.
 The chart type can be "Bar" or "Line".
+Drag over a chart to see the detail behind the data point under your finger.
 The chart animates when any of its criteria is changed.
 The following health metrics are supported:
 
