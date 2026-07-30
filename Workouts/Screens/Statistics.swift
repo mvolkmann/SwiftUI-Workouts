@@ -192,18 +192,31 @@ struct Statistics: View {
     }
 
     private func chartOverlay(proxy: ChartProxy) -> some View {
-        GeometryReader { _ in
+        GeometryReader { geometry in
             Rectangle()
                 .fill(.clear)
                 .contentShape(Rectangle())
                 .gesture(
                     DragGesture()
                         .onChanged { value in
-                            let location = value.location
-                            if let date: String = proxy.value(atX: location.x) {
-                                selectedDate = date
-                                selectedValue = dateToValueMap[date] ?? 0.0
+                            guard let plotFrame = proxy.plotFrame else {
+                                selectedDate = ""
+                                return
                             }
+
+                            let plotAreaFrame = geometry[plotFrame]
+                            let plotAreaX = value.location.x - plotAreaFrame.origin.x
+
+                            guard plotAreaX >= 0,
+                                  plotAreaX <= plotAreaFrame.width,
+                                  let date: String = proxy.value(atX: plotAreaX)
+                            else {
+                                selectedDate = ""
+                                return
+                            }
+
+                            selectedDate = date
+                            selectedValue = dateToValueMap[date] ?? 0.0
                         }
                         .onEnded { _ in selectedDate = "" }
                 )
