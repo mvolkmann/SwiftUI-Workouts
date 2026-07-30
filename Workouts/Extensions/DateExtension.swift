@@ -95,7 +95,7 @@ extension Date {
     }
 
     var startOfYear: Date {
-        let year = Calendar.current.component(.year, from: Date())
+        let year = Calendar.current.component(.year, from: self)
         return Calendar.current.date(
             from: DateComponents(year: year, month: 1, day: 1)
         )!
