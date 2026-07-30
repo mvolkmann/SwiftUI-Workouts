@@ -77,42 +77,46 @@ class HealthStore {
         datedValues: inout [DatedValue],
         frequency: Frequency? = nil
     ) {
+        guard datedValues.count > 1,
+              frequency == .hour || frequency == .day else { return }
+
+        var filledValues: [DatedValue] = []
+
         for index in 0 ..< datedValues.count - 1 {
             let current = datedValues[index]
             let next = datedValues[index + 1]
             let currentDate = Date.from(ms: current.ms)
             let nextDate = Date.from(ms: next.ms)
 
+            filledValues.append(current)
+
+            let missing: Int
             if frequency == .hour {
-                let missing = currentDate.hoursBetween(date: nextDate) - 1
-                if missing > 0 {
-                    for delta in 1 ... missing {
-                        let date = currentDate.hoursAfter(delta)
-                        let datedValue = DatedValue(
-                            date: date.ymdh,
-                            ms: date.milliseconds,
-                            unit: current.unit,
-                            value: 0.0
-                        )
-                        datedValues.insert(datedValue, at: index + delta)
-                    }
-                }
-            } else if frequency == .day {
-                let missing = currentDate.daysBetween(date: nextDate) - 1
-                if missing > 0 {
-                    for delta in 1 ... missing {
-                        let date = currentDate.daysAfter(delta)
-                        let datedValue = DatedValue(
-                            date: date.ymd,
-                            ms: date.milliseconds,
-                            unit: current.unit,
-                            value: 0.0
-                        )
-                        datedValues.insert(datedValue, at: index + delta)
-                    }
+                missing = currentDate.hoursBetween(date: nextDate) - 1
+            } else {
+                missing = currentDate.daysBetween(date: nextDate) - 1
+            }
+
+            if missing > 0 {
+                for delta in 1 ... missing {
+                    let date = frequency == .hour ?
+                        currentDate.hoursAfter(delta) :
+                        currentDate.daysAfter(delta)
+                    let datedValue = DatedValue(
+                        date: frequency == .hour ? date.ymdh : date.ymd,
+                        ms: date.milliseconds,
+                        unit: current.unit,
+                        value: 0.0
+                    )
+                    filledValues.append(datedValue)
                 }
             }
         }
+
+        if let last = datedValues.last {
+            filledValues.append(last)
+        }
+        datedValues = filledValues
     }
 
     func average(
