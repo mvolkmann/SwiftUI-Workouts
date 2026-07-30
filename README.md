@@ -1,7 +1,7 @@
 # Workout Entry
 
-The iOS Health app writes to and reads from a database of health information.
-The data this stores includes:
+The iOS Health app writes to and reads from a database of health information
+using HealthKit.  The data this stores includes:
 
 - workouts (cycling, running, swimming, walking, ...)
 - activity ring data
@@ -21,6 +21,18 @@ Examples include some treadmills and spinning bikes.
 In those cases, users need to manually record their workouts.
 This can be done using the Health app, but the process is tedious.
 
+To manually add a workout in the Health app:
+
+- open the Health app
+- if "Workouts" isn't pinned to the Summary screen, tap "Show All Health Data"
+- tap "Workouts"
+- tap the "+" button in the upper-right
+- select an "Activity Type" (e.g. Cycling)
+- enter data appropriate for the selected activity (e.g. Calories and Distance)
+- select the "Starts" day and time
+- select the "Ends" day and time,
+- tap the checkmark button in the upper-right
+
 The Workout Entry app simplifies adding workout data to the Health database
 and displaying health data.
 When users start the app for the first time,
@@ -38,6 +50,15 @@ The "Workout" screen allows users to:
   if appropriate for the workout type
 - enter the number of calories burned
 - add the described workout by tapping the "Add Workout" button
+
+To verify that a workout was successfully added:
+
+- open the Health app
+- if "Workouts" isn't pinned to the Summary screen, tap "Show All Health Data"
+- tap "Workouts"
+- scroll to the bottom
+- tap "Show All Data"
+- examine the first entry
 
 The "Settings" screen allows users to configure the default workout
 displayed on the "Workout" screen.
@@ -100,3 +121,15 @@ from Swift 5 to Swift 6.
 The main reason I chose to use this app for my final project
 is that I want to deploy it to the App Store and
 the course syllabus calls for discussing deploying apps in week 8.
+
+This project organizes its source files into groups.
+The table below describes the purpose of the source files in each group.
+
+| Group Name | Purpose |
+|------------|---------|
+| Extensions | adds convenience methods to the existing Swift classes Date, String, and View |
+| Models     | define the app's core data types, enums, and value structures |
+| Screens    | implement the top-level app screens |
+| Services   | handles integration of AppStorage and HealthKit |
+| Views      | defines SwiftUI view components used across the screens |
+| ViewModels | holds observable state and business logic that connects views to services and app data |
