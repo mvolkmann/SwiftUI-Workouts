@@ -33,7 +33,7 @@ extension Date {
     }
 
     static func from(ms: Int) -> Date {
-        Date(timeIntervalSince1970: TimeInterval(ms / 1000))
+        Date(timeIntervalSince1970: TimeInterval(ms) / 1000)
     }
 
     func hoursAfter(_ hours: Int) -> Date {
