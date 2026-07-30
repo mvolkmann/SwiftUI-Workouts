@@ -104,6 +104,11 @@ final class Metrics: Sendable {
             unit: .mile()
         )
         addMetricSum(
+            name: "Distance Swimming",
+            identifier: .distanceSwimming,
+            unit: .mile()
+        )
+        addMetricSum(
             name: "Distance Walking & Running",
             identifier: .distanceWalkingRunning,
             unit: .mile()

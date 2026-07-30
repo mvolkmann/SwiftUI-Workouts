@@ -125,29 +125,12 @@ class HealthStore {
         startDate: Date,
         endDate: Date
     ) async throws -> Double {
-        try await withCheckedThrowingContinuation { completion in
-            let quantityType = HKQuantityType.quantityType(
-                forIdentifier: identifier
-            )!
-            let predicate: NSPredicate? = HKQuery.predicateForSamples(
-                withStart: startDate,
-                end: endDate
-            )
-            let query = HKStatisticsQuery(
-                quantityType: quantityType,
-                quantitySamplePredicate: predicate,
-                options: .discreteAverage
-            ) { (_: HKStatisticsQuery, result: HKStatistics?, error: Error?) in
-                if let error {
-                    completion.resume(throwing: error)
-                } else {
-                    let quantity: HKQuantity? = result?.averageQuantity()
-                    let result = quantity?.doubleValue(for: unit)
-                    completion.resume(returning: result ?? 0)
-                }
-            }
-            store.execute(query)
-        }
+        try await statisticsValue(
+            identifier: identifier,
+            unit: unit,
+            startDate: startDate,
+            endDate: endDate
+        )
     }
 
     private func categoryType(
@@ -397,24 +380,25 @@ class HealthStore {
         }
     }
 
-    func sum(
+    func statisticsValue(
         identifier: HKQuantityTypeIdentifier,
         unit: HKUnit,
         startDate: Date,
         endDate: Date
     ) async throws -> Double {
-        try await withCheckedThrowingContinuation { completion in
-            let quantityType = HKQuantityType.quantityType(
-                forIdentifier: identifier
-            )!
+        guard let metric = Metrics.shared.map[identifier] else {
+            throw AppError(message: "metric \(identifier.rawValue) not found")
+        }
+
+        return try await withCheckedThrowingContinuation { completion in
             let predicate: NSPredicate? = HKQuery.predicateForSamples(
                 withStart: startDate,
                 end: endDate
             )
             let query = HKStatisticsQuery(
-                quantityType: quantityType,
+                quantityType: quantityType(identifier),
                 quantitySamplePredicate: predicate,
-                options: .cumulativeSum
+                options: metric.option
             ) { (_: HKStatisticsQuery, result: HKStatistics?, error: Error?) in
                 if let error {
                     if error.localizedDescription
@@ -423,14 +407,31 @@ class HealthStore {
                     } else {
                         completion.resume(throwing: error)
                     }
-                } else {
-                    let quantity: HKQuantity? = result?.sumQuantity()
-                    let result = quantity?.doubleValue(for: unit)
-                    completion.resume(returning: result ?? 0)
+                    return
                 }
+
+                let quantity: HKQuantity? = metric.option.contains(.cumulativeSum) ?
+                    result?.sumQuantity() :
+                    result?.averageQuantity()
+                let value = quantity?.doubleValue(for: unit)
+                completion.resume(returning: value ?? 0)
             }
             store.execute(query)
         }
+    }
+
+    func sum(
+        identifier: HKQuantityTypeIdentifier,
+        unit: HKUnit,
+        startDate: Date,
+        endDate: Date
+    ) async throws -> Double {
+        try await statisticsValue(
+            identifier: identifier,
+            unit: unit,
+            startDate: startDate,
+            endDate: endDate
+        )
     }
 
     // enum with values notSet(0), no(1), and yes(2)
