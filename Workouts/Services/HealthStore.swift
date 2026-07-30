@@ -201,7 +201,7 @@ class HealthStore {
 
         if !datedValues.isEmpty,
            Self.zeroFilledQuantityTypes.contains(identifier) {
-            addZeros(datedValues: &datedValues, frequency: frequency)
+            addZeros(datedValues: &datedValues, frequency: frequencyToUse)
         }
 
         return datedValues
