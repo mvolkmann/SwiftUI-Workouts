@@ -39,7 +39,11 @@ When users start the app for the first time,
 they should grant access to reading most or all health data
 and writing workout, active energy burned, and distance data.
 
+## Screens
+
 The app is composed of three main screens.
+
+![Workout screen](screenshots/workout.png)
 
 The "Workout" screen allows users to:
 
@@ -68,8 +72,12 @@ This screen enables selecting default values for
 the workout type, units (miles or kilometers), duration (minutes),
 distance (in the selected units), and calories burned.
 
+![Settings screen](screenshots/settings.png)
+
 The "Statistics" screen displays many health statistics.
 It is composed of three tabs, the current year, the past 7 days, and charts.
+
+![Current year statistics](screenshots/statistics-year.png)
 
 The current year tab displays the total cycling, running, swimming,
 and "walk+run" distance for the current year so far.
@@ -83,6 +91,8 @@ The "Past 7 Days" tab displays the following data:
 - Active Calories burned per day
 - Basal Calories burned per day
 - Total Calories burned per day
+
+![Past 7 days statistics](screenshots/statistics-past-7-days.png)
 
 The "Charts" tab displays a chart (using Swift Charts) that contains
 data for a selected health metric over a selected time span.
@@ -112,15 +122,11 @@ The following health metrics are supported:
 - Walking Speed
 - Walking Step Length
 
-I wrote this app in 2024, before LLM-assisted coding became common,
-so no AI was used to create it.  It was written with Swift 5
-and the latest version of Xcode at the time.
-I did make minor use of the OpenAI Codex LLM to update the app
-from Swift 5 to Swift 6.
+![Bar chart statistics](screenshots/statistics-charts-bar.png)
 
-The main reason I chose to use this app for my final project
-is that I want to deploy it to the App Store and
-the course syllabus calls for discussing deploying apps in week 8.
+![Line chart statistics](screenshots/statistics-charts-line.png)
+
+## Groups
 
 This project organizes its source files into groups.
 The table below describes the purpose of the source files in each group.
@@ -133,3 +139,16 @@ The table below describes the purpose of the source files in each group.
 | Services   | handles integration of AppStorage and HealthKit |
 | Views      | defines SwiftUI view components used across the screens |
 | ViewModels | holds observable state and business logic that connects views to services and app data |
+
+## Origin
+
+I wrote this app in 2024, before LLM-assisted coding became common,
+so no AI was used to create it.  It was written with Swift 5
+and the latest version of Xcode at the time.
+I did make minor use of the OpenAI Codex LLM to update the app
+from Swift 5 to Swift 6.
+
+The main reason I chose to use this app for my final project
+is that I want to deploy it to the App Store and
+the course syllabus calls for discussing deploying apps in week 8.
+
