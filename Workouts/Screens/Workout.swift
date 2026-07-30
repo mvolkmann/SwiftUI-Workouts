@@ -38,6 +38,11 @@ struct Workout: View {
     private func addWorkout() {
         Task { @MainActor in
             do {
+                guard let workoutStartTime = workoutDate(using: startTime),
+                      let workoutEndTime = workoutDate(using: endTime) else {
+                    throw AppError(message: "Could not create workout dates.")
+                }
+
                 // HealthKit seems to round down to the nearest tenth.
                 // For example, 20.39 becomes 20.3.
                 // Adding 0.05 causes it to round to the nearest tenth.
@@ -47,8 +52,8 @@ struct Workout: View {
 
                 try await HealthStore().addWorkout(
                     workoutType: workoutType,
-                    startTime: startTime,
-                    endTime: endTime,
+                    startTime: workoutStartTime,
+                    endTime: workoutEndTime,
                     distance: distanceNumber,
                     calories: caloriesNumber
                 )
@@ -90,6 +95,20 @@ struct Workout: View {
         date = Date.now
         endTime = date.removeSeconds()
         startTime = endTime.minutesBefore(Int(defaultDuration) ?? 0)
+    }
+
+    private func workoutDate(using time: Date) -> Date? {
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+
+        return calendar.date(from: DateComponents(
+            year: dateComponents.year,
+            month: dateComponents.month,
+            day: dateComponents.day,
+            hour: timeComponents.hour,
+            minute: timeComponents.minute
+        ))
     }
 
     var body: some View {
