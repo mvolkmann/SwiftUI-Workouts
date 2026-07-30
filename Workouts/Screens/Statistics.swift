@@ -465,25 +465,7 @@ struct Statistics: View {
     }
 
     private var title: String {
-        if metric.identifier == .bodyMass { return "Weight" }
-        if metric.identifier == .vo2Max { return "VO2 Max" }
-
-        var text = metric.identifier.rawValue
-
-        // Remove metric prefix.
-        let prefix = "HKQuantityTypeIdentifier"
-        if text.starts(with: prefix) {
-            text = text[prefix.count...]
-        }
-
-        // Add a space before all uppercase characters except the first.
-        var result = text[0]
-        for char in text.dropFirst() {
-            if char.isUppercase { result += " " }
-            result.append(char)
-        }
-
-        return result
+        metric.name
     }
 
     private var unitName: String {
