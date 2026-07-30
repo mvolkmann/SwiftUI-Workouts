@@ -1,4 +1,3 @@
-import Combine // for onReceive method
 import SwiftUI
 
 // See the Stewart Lynch video at
@@ -16,7 +15,7 @@ struct NumbersOnlyViewModifier: ViewModifier {
             // to prevent other keys from being pressed because those keyboards
             // contain more keys when running on an iPad.
             .keyboardType(float ? .decimalPad : .numberPad)
-            .onReceive(Just(text)) { newValue in
+            .onChange(of: text, initial: true) { _, newValue in
                 // If there are multiple decimal separators ...
                 if newValue.count(of: decimalSeparator) > 1 {
                     // Remove the last decimal separator.
