@@ -58,9 +58,10 @@ struct AppInfo {
         return Self(json: results)
     }
 
-    private func date(_ key: String) -> Date {
-        guard let value = json[key] as? String else { return Date.now }
-        return date(from: value) ?? Date.now
+    private func date(_ key: String) -> Date? {
+        if let value = json[key] as? Date { return value }
+        guard let value = json[key] as? String else { return nil }
+        return date(from: value)
     }
 
     private func double(_ key: String) -> Double {
@@ -117,7 +118,7 @@ struct AppInfo {
     }
     // "Promotional Text" is not present in the App Store JSON.
     var price: Double { double("price") }
-    var releaseDate: Date { date("currentVersionReleaseDate") }
+    var releaseDate: Date? { date("currentVersionReleaseDate") }
     var releaseNotes: String { string("releaseNotes") }
     var storeVersion: String { string("version", fallback: installedVersion) }
 }
