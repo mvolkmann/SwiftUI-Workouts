@@ -2,6 +2,8 @@ import HealthKit
 import SwiftUI
 
 @MainActor
+// Published properties drive SwiftUI updates.
+// This view model stays on the main actor where UI state is allowed to change.
 final class HealthKitViewModel: ObservableObject {
     // This is a singleton class.
     static let shared = HealthKitViewModel()
@@ -10,6 +12,8 @@ final class HealthKitViewModel: ObservableObject {
 
     // MARK: - Properties
 
+    // private(set) lets views read these values, but keeps updates
+    // inside HealthKitViewModel so all HealthKit loading has one owner.
     @Published private(set) var activeEnergyBurned: [DatedValue] = []
     @Published private(set) var activeEnergyBurnedSum = 0.0
     @Published private(set) var appleExerciseTime: [DatedValue] = []

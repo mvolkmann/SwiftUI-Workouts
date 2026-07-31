@@ -92,6 +92,7 @@ struct Statistics: View {
     }
 
     private func annotationPosition(_ index: Int) -> AnnotationPosition {
+        // Move edge annotations inward so they do not get clipped by the chart.
         let percent = Double(index) / Double(data.count)
         return percent < 0.1 ? .topTrailing :
             percent > 0.95 ? .topLeading :
@@ -117,6 +118,8 @@ struct Statistics: View {
             ForEach(data.indices, id: \.self) { index in
                 let datedValue = data[index]
 
+                // HealthKit percent values are stored as 0.0...1.0,
+                // but the chart should display them as 0...100.
                 let multiplier = metric.unit == .percent() ? 100.0 : 1.0
                 let value = datedValue.animate ?
                     datedValue.value * multiplier : 0.0
@@ -193,6 +196,7 @@ struct Statistics: View {
 
     private func chartOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
+            // The clear rectangle creates a tappable/drag area over the chart.
             Rectangle()
                 .fill(.clear)
                 .contentShape(Rectangle())
@@ -205,7 +209,11 @@ struct Statistics: View {
                             }
 
                             let plotAreaFrame = geometry[plotFrame]
-                            let plotAreaX = value.location.x - plotAreaFrame.origin.x
+                            // Gestures use the overlay's coordinates.
+                            // ChartProxy expects x positions to be
+                            // relative to the plot area.
+                            let plotAreaX =
+                                value.location.x - plotAreaFrame.origin.x
 
                             guard plotAreaX >= 0,
                                   plotAreaX <= plotAreaFrame.width,
@@ -320,6 +328,8 @@ struct Statistics: View {
             timeSpan: timeSpan
         )
 
+        // HealthKit work is asynchronous. Using @MainActor allows
+        // SwiftUI to update state safely when the query finishes.
         Task { @MainActor in
             do {
                 let newData = try await HealthStore().getData(

@@ -30,6 +30,8 @@ final class Metrics: Sendable {
     private init() {
         var map: [HKQuantityTypeIdentifier: Metric] = [:]
 
+        // These helper functions keep each metric definition short and
+        // record whether HealthKit should return an average or a sum.
         func addMetricAverage(
             name: String,
             identifier: HKQuantityTypeIdentifier,

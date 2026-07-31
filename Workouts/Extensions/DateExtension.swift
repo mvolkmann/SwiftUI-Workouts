@@ -32,6 +32,8 @@ extension Date {
         Calendar.current.date(from: dateComponents)
     }
 
+    // Returns a Date that is a given number of
+    // milliseconds from the start of 1970.
     static func from(ms: Int) -> Date {
         Date(timeIntervalSince1970: TimeInterval(ms) / 1000)
     }
@@ -68,6 +70,8 @@ extension Date {
     }
 
     static func mondayAt12AM() -> Date {
+        // HealthKit statistics collections need an anchor date.
+        // Using an ISO-8601 week date makes weekly buckets start on Monday.
         Calendar(identifier: .iso8601)
             .date(from: Calendar(identifier: .iso8601).dateComponents(
                 [.yearForWeekOfYear, .weekOfYear],
@@ -102,6 +106,8 @@ extension Date {
     }
 
     var withoutTime: Date {
+        // Rebuilding from only year/month/day gives midnight
+        // in the current calendar and time zone.
         let from = Calendar.current.dateComponents(
             [.year, .month, .day],
             from: self

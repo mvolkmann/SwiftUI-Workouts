@@ -116,6 +116,7 @@ struct AppInfo {
             fallback: Self.bundleInfo("CFBundleDisplayName", "CFBundleName")
         )
     }
+
     // "Promotional Text" is not present in the App Store JSON.
     var price: Double { double("price") }
     var releaseDate: Date? { date("currentVersionReleaseDate") }

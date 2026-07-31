@@ -42,6 +42,8 @@ final class ChartDetail: Sendable {
         metric: HKQuantityTypeIdentifier,
         timeSpan: TimeSpan
     ) -> Frequency? {
+        // Use metric-specific frequency overrides when they exist.
+        // Otherwise fall back to defaults based on the selected time span.
         let key = ChartKey(metric: metric, timeSpan: timeSpan)
         if let value = map[key] {
             return value.frequency

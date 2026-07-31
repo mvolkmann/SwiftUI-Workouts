@@ -2,10 +2,14 @@ import HealthKit
 
 // swiftlint:disable type_body_length
 class HealthStore {
-    private static let zeroFilledQuantityTypes: Set<HKQuantityTypeIdentifier> = [
-        .distanceCycling, .distanceWalkingRunning, .distanceWheelchair,
-        .pushCount, .stepCount
-    ]
+    private static let zeroFilledQuantityTypes: Set<HKQuantityTypeIdentifier> =
+        [
+            .distanceCycling,
+            .distanceWalkingRunning,
+            .distanceWheelchair,
+            .pushCount,
+            .stepCount
+        ]
 
     // This assumes that HKHealthStore.isHealthDataAvailable()
     // has already been checked.
@@ -22,6 +26,9 @@ class HealthStore {
             throw AppError(message: "no workout type found for \(workoutType)")
         }
 
+        // HealthKit stores workout measurements as typed samples.
+        // The workout itself and its calorie/distance samples
+        // are saved together below.
         let energyBurnedType =
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!
         let energyBurnedQuantity = HKQuantity(
@@ -38,6 +45,7 @@ class HealthStore {
 
         var distanceQuantity: HKQuantity?
 
+        // Some workout types, such as yoga or boxing, do not have distance.
         if let identifier = workoutType.distanceIdentifier {
             let distanceType =
                 HKObjectType.quantityType(forIdentifier: identifier)!
@@ -62,6 +70,7 @@ class HealthStore {
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = workoutType.activityType
 
+        // HKWorkoutBuilder groups the samples into one HealthKit workout entry.
         let workoutBuilder = HKWorkoutBuilder(
             healthStore: store,
             configuration: configuration,
@@ -82,6 +91,9 @@ class HealthStore {
 
         var filledValues: [DatedValue] = []
 
+        // HealthKit can omit some empty buckets.
+        // Inserting zeros keeps bar/line charts
+        // from skipping hours or days with no activity.
         for index in 0 ..< datedValues.count - 1 {
             let current = datedValues[index]
             let next = datedValues[index + 1]
@@ -170,6 +182,8 @@ class HealthStore {
 
         let frequencyToUse = frequency ?? metric.frequency
 
+        // HKStatisticsCollectionQuery uses DateComponents to decide
+        // how wide each returned time bucket should be.
         let interval =
             frequencyToUse == .minute ? DateComponents(minute: 1) :
             frequencyToUse == .hour ? DateComponents(hour: 1) :
@@ -240,6 +254,8 @@ class HealthStore {
             intervalComponents: intervalComponents
         )
         return try await withCheckedThrowingContinuation { continuation in
+            // HealthKit reports collection query results through a callback.
+            // The continuation here turns that callback into async/await.
             query.initialResultsHandler = { _, collection, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -264,6 +280,9 @@ class HealthStore {
         )
 
         return try await withCheckedThrowingContinuation { continuation in
+            // HKSampleQuery returns all workouts in the given date range.
+            // The reduce below keeps only running workouts
+            // with distance samples.
             let query = HKSampleQuery(
                 sampleType: .workoutType(),
                 predicate: workouts,
@@ -321,7 +340,7 @@ class HealthStore {
                     .activitySummaryType(),
                     .workoutType(),
 
-                    // It seems there is both appleStandHour and appleStandHours.
+                    // It seems there is both appleStandHour & appleStandHours.
                     // Are these just two names for the same thing?
                     categoryType(.appleStandHour),
 
@@ -391,6 +410,8 @@ class HealthStore {
         }
 
         return try await withCheckedThrowingContinuation { completion in
+            // HKStatisticsQuery is callback-based.  This continuation
+            // resumes when HealthKit has either a value or an error.
             let predicate: NSPredicate? = HKQuery.predicateForSamples(
                 withStart: startDate,
                 end: endDate
@@ -410,7 +431,11 @@ class HealthStore {
                     return
                 }
 
-                let quantity: HKQuantity? = metric.option.contains(.cumulativeSum) ?
+                // The metric definition controls whether this query
+                // reads a total (such as steps) or
+                // an average (such as heart rate).
+                let quantity: HKQuantity? = metric.option
+                    .contains(.cumulativeSum) ?
                     result?.sumQuantity() :
                     result?.averageQuantity()
                 let value = quantity?.doubleValue(for: unit)

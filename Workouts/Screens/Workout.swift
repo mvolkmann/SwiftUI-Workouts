@@ -98,9 +98,18 @@ struct Workout: View {
     }
 
     private func workoutDate(using time: Date) -> Date? {
+        // The date picker and time pickers store separate Date values.
+        // This combines the selected calendar day with the selected
+        // hour/minute.
         let calendar = Calendar.current
-        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
-        let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+        let dateComponents = calendar.dateComponents(
+            [.year, .month, .day],
+            from: date
+        )
+        let timeComponents = calendar.dateComponents(
+            [.hour, .minute],
+            from: time
+        )
 
         return calendar.date(from: DateComponents(
             year: dateComponents.year,
@@ -214,6 +223,8 @@ struct Workout: View {
         }
 
         .onChange(of: scenePhase) { oldPhase, newPhase in
+            // When the app returns from the background, refresh the
+            // default workout times so a stale end time is not reused.
             if oldPhase == .background, newPhase == .inactive {
                 resetDateAndTimes()
             }
