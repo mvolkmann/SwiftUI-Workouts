@@ -16,7 +16,7 @@ struct Workout: View {
     @State private var date = Date.now
     @State private var distance = ""
     @State private var endTime = Date.now // adjusted in init
-    @State private var isShowingAlert = false
+    @State private var isShowingToast = false
     @State private var message = ""
     @State private var startTime = Date.now // adjusted in init
     @State private var workoutType = ""
@@ -58,11 +58,11 @@ struct Workout: View {
                     calories: caloriesNumber
                 )
 
+
                 // Reset the UI.
                 distance = defaultDistance
                 calories = defaultCalories
-                message = "A \(workoutType) workout was added."
-                isShowingAlert = true
+                showToast("A \(workoutType) workout was added.")
             } catch {
                 errorVM.alert(
                     error: error,
@@ -95,6 +95,19 @@ struct Workout: View {
         date = Date.now
         endTime = date.removeSeconds()
         startTime = endTime.minutesBefore(Int(defaultDuration) ?? 0)
+    }
+
+    private func showToast(_ text: String) {
+        message = text
+        withAnimation {
+            isShowingToast = true
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            withAnimation {
+                isShowingToast = false
+            }
+        }
     }
 
     private func workoutDate(using time: Date) -> Date? {
@@ -185,19 +198,24 @@ struct Workout: View {
                     addWorkout()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!canAdd)
+                .disabled(!canAdd || isShowingToast)
+                .overlay {
+                    if isShowingToast {
+                        Text(message)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .padding()
+                            .background(
+                                .green,
+                                in: RoundedRectangle(cornerRadius: 8)
+                            )
+                            .foregroundStyle(.white)
+                    }
+                }
             }
             .font(.title2)
             .fontWeight(.bold)
             .padding()
         }
-
-        .alert(
-            "Success",
-            isPresented: $isShowingAlert,
-            actions: {},
-            message: { Text(message) }
-        )
 
         .onAppear {
             UITextField.appearance().clearButtonMode = .whileEditing
