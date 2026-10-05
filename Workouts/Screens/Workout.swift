@@ -39,7 +39,8 @@ struct Workout: View {
         Task { @MainActor in
             do {
                 guard let workoutStartTime = workoutDate(using: startTime),
-                      let workoutEndTime = workoutDate(using: endTime) else {
+                      let workoutEndTime = workoutDate(using: endTime)
+                else {
                     throw AppError(message: "Could not create workout dates.")
                 }
 
@@ -57,7 +58,6 @@ struct Workout: View {
                     distance: distanceNumber,
                     calories: caloriesNumber
                 )
-
 
                 // Reset the UI.
                 distance = defaultDistance
@@ -215,7 +215,16 @@ struct Workout: View {
             .font(.title2)
             .fontWeight(.bold)
             .padding()
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        isFocused.wrappedValue = false
+                    }
+                }
+            }
         }
+        .dismissKeyboardOnTap(isFocused)
 
         .onAppear {
             UITextField.appearance().clearButtonMode = .whileEditing

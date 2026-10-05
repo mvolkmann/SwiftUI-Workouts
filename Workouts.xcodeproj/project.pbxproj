@@ -13,6 +13,7 @@
 		1A1E8AE129BE6A6C00BAA531 /* HealthKitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E8AE029BE6A6C00BAA531 /* HealthKitViewModel.swift */; };
 		1A1E8AE329BE6AF100BAA531 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E8AE229BE6AF100BAA531 /* ViewExtension.swift */; };
 		1A1E8AE529BE6C1A00BAA531 /* HealthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E8AE429BE6C1A00BAA531 /* HealthStore.swift */; };
+		1A30ADB530743F7600D42035 /* KeyboardDismissOnTapModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A30ADB430743F7600D42035 /* KeyboardDismissOnTapModifier.swift */; };
 		1A41DB2729ABADA200CADFAF /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A41DB2629ABADA200CADFAF /* DateExtension.swift */; };
 		1A6ACC6F29ABDF09000ACEEB /* DurationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6ACC6E29ABDF09000ACEEB /* DurationPicker.swift */; };
 		1A88F9D829AFA1CD00DA89AA /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88F9D729AFA1CD00DA89AA /* Utilities.swift */; };
@@ -44,6 +45,7 @@
 		1A1E8AE029BE6A6C00BAA531 /* HealthKitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitViewModel.swift; sourceTree = "<group>"; };
 		1A1E8AE229BE6AF100BAA531 /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		1A1E8AE429BE6C1A00BAA531 /* HealthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthStore.swift; sourceTree = "<group>"; };
+		1A30ADB430743F7600D42035 /* KeyboardDismissOnTapModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDismissOnTapModifier.swift; sourceTree = "<group>"; };
 		1A41DB2629ABADA200CADFAF /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		1A6ACC6E29ABDF09000ACEEB /* DurationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationPicker.swift; sourceTree = "<group>"; };
 		1A88F9D729AFA1CD00DA89AA /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				1A41DB2629ABADA200CADFAF /* DateExtension.swift */,
 				1A90BCC229AA9B420093D160 /* StringExtension.swift */,
 				1A1E8AE229BE6AF100BAA531 /* ViewExtension.swift */,
+				1A30ADB430743F7600D42035 /* KeyboardDismissOnTapModifier.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -288,6 +291,7 @@
 				1A1E8AE329BE6AF100BAA531 /* ViewExtension.swift in Sources */,
 				1A6ACC6F29ABDF09000ACEEB /* DurationPicker.swift in Sources */,
 				1A90BCC329AA9B420093D160 /* StringExtension.swift in Sources */,
+				1A30ADB530743F7600D42035 /* KeyboardDismissOnTapModifier.swift in Sources */,
 				1AAD5E00295B503C00D40C2A /* WorkoutsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

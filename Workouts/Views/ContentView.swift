@@ -71,7 +71,6 @@ struct ContentView: View {
 
             .navigationTitle(selection.title)
             .navigationBarTitleDisplayMode(.inline)
-
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: { isInfoPresented = true }) {
@@ -81,15 +80,6 @@ struct ContentView: View {
                 }
             }
 
-            .toolbar {
-                ToolbarItem(placement: .keyboard) {
-                    Button {
-                        isFocused = false
-                    } label: {
-                        Image(systemName: "keyboard.chevron.compact.down")
-                    }
-                }
-            }
         }
 
         .alert(

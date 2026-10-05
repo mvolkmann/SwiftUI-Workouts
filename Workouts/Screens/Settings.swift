@@ -33,7 +33,8 @@ struct Settings: View {
                 WorkoutTypePicker(workoutType: $defaultWorkoutType)
 
                 if WorkoutType.named(defaultWorkoutType)?
-                    .tracksDistance == true {
+                    .tracksDistance == true
+                {
                     Picker("", selection: $preferKilometers) {
                         Text("Miles").tag(false)
                         Text("Kilometers").tag(true)
@@ -44,7 +45,8 @@ struct Settings: View {
                 DurationPicker(duration: $defaultDuration)
 
                 if WorkoutType.named(defaultWorkoutType)?
-                    .tracksDistance == true {
+                    .tracksDistance == true
+                {
                     LabeledContent("Distance") {
                         TextField("distance", text: $defaultDistance)
                             .focused(isFocused)
@@ -65,6 +67,15 @@ struct Settings: View {
             .font(.title2)
             .fontWeight(.bold)
             .padding()
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        isFocused.wrappedValue = false
+                    }
+                }
+            }
         }
+        .dismissKeyboardOnTap(isFocused)
     }
 }
